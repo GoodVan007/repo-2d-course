@@ -19,9 +19,6 @@ namespace PhotoEnxancer
             set => data[x, y] = value;
         }
 
-        //public Pixel GetPixel(int x, int y) => data[x, y];
-        //public Pixel SetPixel(int x, int y, Pixel p) => data[x, y] = p;
-
         public Photo(int width, int height)
         {
             if (width <= 0 || height <= 0)
@@ -33,6 +30,5 @@ namespace PhotoEnxancer
                 for (int y = 0; y < height; y++)
                     data[x, y] = new Pixel();
         }
-
     }
 }

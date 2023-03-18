@@ -13,8 +13,8 @@ namespace PhotoEnxancer
     public partial class mainForm : Form
     {
 
-        Bitmap originalBmp;
-        Bitmap ResultBmp;
+        Photo originalPhoto;
+        Photo ResultPhoto;
 
         Panel parametersPanel;
 
@@ -22,8 +22,9 @@ namespace PhotoEnxancer
         {
             InitializeComponent();
 
-            originalBmp = (Bitmap)Image.FromFile("SmallStark.jpg");
-            OriginalPictureBox.Image = originalBmp;
+            var bmp = (Bitmap)Image.FromFile("SmallStark.jpg");
+            OriginalPictureBox.Image = bmp;
+            originalPhoto = Converters.BitmapToPhoto(bmp);
 
             FiltersComboBox.Items.Add("Brightness");
         }
@@ -87,33 +88,25 @@ namespace PhotoEnxancer
 
         private void ApplyButton_Click(object sender, EventArgs e)
         {
-            var newBmp = new Bitmap(originalBmp.Width, originalBmp.Height);
+            var newPhoto = new Photo(originalPhoto.Width, originalPhoto.Height);
             if (FiltersComboBox.SelectedItem.ToString() == "Brightness")
             {
                 var k = (double)((NumericUpDown)parametersPanel.Controls["Ratio"]).Value;
-                //MessageBox.Show(k.ToString());
+                
 
-                for(var x = 0; x < originalBmp.Width; x++)
-                    for(var y=0;  y<originalBmp.Height; y++)
-                    {
-                        var pixelColor = originalBmp.GetPixel(x, y);
-                        var newR = (int)(pixelColor.R * k);
-                        if(newR > 255)
-                            newR = 255;
+                var newPhoto = new Photo(originalPhoto.Width, originalPhoto.Height);
 
-                        var newG = (int)(pixelColor.G * k);
-                        if (newG > 255)
-                            newG = 255;
+                if (filtersComboBox.SelectedItem.ToString() == "Осветление/затемнение")
+                {
+                    var k = (double)((NumericUpDown)parametersPanel.Controls["coefficient"]).Value;
 
-                        var newB = (int)(pixelColor.B * k);
-                        if (newB > 255)
-                            newB = 255;
-
-                        newBmp.SetPixel(x, y, Color.FromArgb(newR, newG, newB));
-                    }
+                    for (var x = 0; x < originalPhoto.Width; x++)
+                        for (var y = 0; y < originalPhoto.Height; y++)
+                            newPhoto[x, y] = k * originalPhoto[x, y];
+                }
             }
-            ResultBmp = newBmp;
-            resultPictureBox.Image = ResultBmp;
+            ResultPhoto = newPhoto;
+            resultPictureBox.Image = Converters.PhotoToBitmap(ResultPhoto);
         }
     }
 }
